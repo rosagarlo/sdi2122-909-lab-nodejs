@@ -1,22 +1,14 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+let app = express();
 
-var app = express();
-
-app.get("/songs", function (req, res) {
-  console.log("depurar aqui")
-  res.send("Lista de canciones")
-});
-app.get("/singers", function (req, res) {
-  console.log("depurar aqui")
-  res.send("Lista de cantantes")
-});
+let indexRouter = require('./routes/index');
+let usersRouter = require('./routes/users');
+require("./routes/songs.js")(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,6 +22,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+module.exports = function (app) {
+  app.get("/songs", function (req, res) {
+    let response = "";
+    if(req.query.title != null && typeof (req.query.title) != "undefined")
+      response = "Titulo:" + req.query.title + '<br>';
+    if(req.query.author != null && typeof (req.query.author) != "undefined")
+      response += "Autor:" + req.query.author;
+    res.send(response);
+  });
+};
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
