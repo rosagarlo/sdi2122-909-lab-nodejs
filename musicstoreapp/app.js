@@ -8,11 +8,16 @@ let app = express();
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
-require("./routes/songs.js")(app);
+let bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
+
+require("./routes/songs.js")(app);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -22,17 +27,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-module.exports = function (app) {
-  app.get("/songs", function (req, res) {
-    let response = "";
-    if(req.query.title != null && typeof (req.query.title) != "undefined")
-      response = "Titulo:" + req.query.title + '<br>';
-    if(req.query.author != null && typeof (req.query.author) != "undefined")
-      response += "Autor:" + req.query.author;
-    res.send(response);
-  });
-};
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
