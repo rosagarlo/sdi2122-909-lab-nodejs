@@ -13,11 +13,11 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+require("./routes/songs.js")(app);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
-
-require("./routes/songs.js")(app);
 
 app.use(logger('dev'));
 app.use(express.json());
