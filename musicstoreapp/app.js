@@ -5,6 +5,14 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
 let app = express();
+let expressSession = require('express-session');
+app.use(expressSession({
+    secret: 'abcdefg',
+    resave: true,
+    saveUninitialized: true
+}));
+
+let crypto = require('crypto');
 
 let fileUpload = require('express-fileupload');
 app.use(fileUpload(
@@ -12,7 +20,10 @@ app.use(fileUpload(
         limits: {fileSize: 50 * 1024 * 1024},
         createParentPath: true
     }));
+
 app.set('uploadPath', __dirname)
+app.set('clave', 'abcdefg');
+app.set('crypto', crypto);
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
@@ -25,9 +36,13 @@ const {MongoClient} = require("mongodb");
 const url = "mongodb://admin:TnyorDwXLLLQrQUN@tiendamusica-shard-00-00.xyhss.mongodb.net:27017,tiendamusica-shard-00-01.xyhss.mongodb.net:27017,tiendamusica-shard-00-02.xyhss.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-ko1y1k-shard-0&authSource=admin&retryWrites=true&w=majority";
 
 app.set('connectionStrings', url);
+
 let songsRepository = require("./repositories/songsRepository.js"); // los repositorios deben estar definidos ANTES que los controladores
 songsRepository.init(app, MongoClient);
+const usersRepository = require("./repositories/usersRepository.js");
+usersRepository.init(app, MongoClient);
 
+let indexRouter = require('./routes/index');
 require("./routes/songs.js")(app, songsRepository);
 require("./routes/authors.js")(app);
 
@@ -42,7 +57,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
