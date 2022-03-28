@@ -1,4 +1,4 @@
-module.exports = function (app, twig) {
+module.exports = function (app) {
     app.get("/authors", function (req, res) {
         let authors = [{
             "name": "John Lenon",

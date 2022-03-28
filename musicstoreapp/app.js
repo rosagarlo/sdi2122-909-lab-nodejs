@@ -17,8 +17,10 @@ const {MongoClient} = require("mongodb");
 const url = "mongodb://admin:sdi@tiendamusica-shard-00-00.xyhss.mongodb.net:27017,tiendamusica-shard-00-01.xyhss.mongodb.net:27017,tiendamusica-shard-00-02.xyhss.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-ko1y1k-shard-0&authSource=admin&retryWrites=true&w=majority";
 
 app.set('connectionStrings', url);
+let songsRepository = require("./repositories/songsRepository.js"); // los repositorios deben estar definidos ANTES que los controladores
+songsRepository.init(app, MongoClient);
 
-require("./routes/songs.js")(app, MongoClient);
+require("./routes/songs.js")(app, songsRepository);
 require("./routes/authors.js")(app);
 
 // view engine setup
