@@ -6,6 +6,14 @@ let logger = require('morgan');
 
 let app = express();
 
+let fileUpload = require('express-fileupload');
+app.use(fileUpload(
+    {
+        limits: {fileSize: 50 * 1024 * 1024},
+        createParentPath: true
+    }));
+app.set('uploadPath', __dirname)
+
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let bodyParser = require('body-parser');
@@ -14,7 +22,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 const {MongoClient} = require("mongodb");
-const url = "mongodb://admin:sdi@tiendamusica-shard-00-00.xyhss.mongodb.net:27017,tiendamusica-shard-00-01.xyhss.mongodb.net:27017,tiendamusica-shard-00-02.xyhss.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-ko1y1k-shard-0&authSource=admin&retryWrites=true&w=majority";
+const url = "mongodb://admin:TnyorDwXLLLQrQUN@tiendamusica-shard-00-00.xyhss.mongodb.net:27017,tiendamusica-shard-00-01.xyhss.mongodb.net:27017,tiendamusica-shard-00-02.xyhss.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-ko1y1k-shard-0&authSource=admin&retryWrites=true&w=majority";
 
 app.set('connectionStrings', url);
 let songsRepository = require("./repositories/songsRepository.js"); // los repositorios deben estar definidos ANTES que los controladores
