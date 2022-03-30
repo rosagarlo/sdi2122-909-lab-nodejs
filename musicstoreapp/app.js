@@ -25,8 +25,6 @@ app.set('uploadPath', __dirname)
 app.set('clave', 'abcdefg');
 app.set('crypto', crypto);
 
-let indexRouter = require('./routes/index');
-let usersRouter = require('./routes/users');
 let bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
@@ -37,12 +35,22 @@ const url = "mongodb://admin:TnyorDwXLLLQrQUN@tiendamusica-shard-00-00.xyhss.mon
 
 app.set('connectionStrings', url);
 
+// Antes de los controladores de /users y /songs
+const userSessionRouter = require('./routes/userSessionRouter');
+const userAudiosRouter = require('./routes/userAudiosRouter');
+
+app.use("/songs/add", userSessionRouter);
+app.use("/publications", userSessionRouter);
+app.use("/audios/",userAudiosRouter);
+app.use("/shop/", userSessionRouter)
+
 let songsRepository = require("./repositories/songsRepository.js"); // los repositorios deben estar definidos ANTES que los controladores
 songsRepository.init(app, MongoClient);
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 
 let indexRouter = require('./routes/index');
+require("./routes/users.js")(app, usersRepository);
 require("./routes/songs.js")(app, songsRepository);
 require("./routes/authors.js")(app);
 

@@ -1,0 +1,5 @@
+/musicstoreapp/node_modules/
+/node_modules/
+/package-lock.json
+/musicstoreapp/package-lock.json
+/.idea/

@@ -3,6 +3,7 @@
   "description": "Tienda de música",
   "version": "1.0.0",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "express-session": "^1.17.2"
   }
 }
