@@ -44,14 +44,18 @@ app.use("/publications", userSessionRouter);
 app.use("/audios/",userAudiosRouter);
 app.use("/shop/", userSessionRouter)
 
+let commentsRepository = require("./repositories/commentsRepository.js");
+commentsRepository.init(app, MongoClient);
 let songsRepository = require("./repositories/songsRepository.js"); // los repositorios deben estar definidos ANTES que los controladores
 songsRepository.init(app, MongoClient);
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 
+
 let indexRouter = require('./routes/index');
 require("./routes/users.js")(app, usersRepository);
-require("./routes/songs.js")(app, songsRepository);
+require("./routes/comments.js")(app, commentsRepository);
+require("./routes/songs.js")(app, songsRepository, commentsRepository);
 require("./routes/authors.js")(app);
 
 // view engine setup
