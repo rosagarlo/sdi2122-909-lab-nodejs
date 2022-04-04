@@ -16,8 +16,7 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    },
-    findSong: async function (filter, options) {
+    }, findSong: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("musicStore");
@@ -28,8 +27,18 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    },
-    updateSong: async function (newSong, filter, options) {
+    }, deleteSong: async function (filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("musicStore");
+            const collectionName = 'songs';
+            const songsCollection = database.collection(collectionName);
+            const result = await songsCollection.deleteOne(filter, options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    }, updateSong: async function (newSong, filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("musicStore");
@@ -40,8 +49,7 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    },
-    insertSong: function (song, callbackFunction) {
+    }, insertSong: function (song, callbackFunction) {
         this.mongoClient.connect(this.app.get('connectionStrings'), function (err, dbClient) {
             if (err) {
                 callbackFunction(null)
