@@ -75,7 +75,7 @@ module.exports = function (app, songsRepository, commentsRepository) {
     })
 
     app.get('/songs/add', function (req, res) {
-        res.render("songs/add.twig");
+        res.render("/songs/add.twig");
     });
 
     app.post('/songs/add', function (req, res) {
