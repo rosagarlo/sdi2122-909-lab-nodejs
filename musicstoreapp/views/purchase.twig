@@ -1,5 +1,5 @@
 {% extends "layout.twig" %}
-{% block title %} Mis publicaciones {% endblock %}
+{% block title %} Mis compras {% endblock %}
 
 {% block main_container %}
 <h2>Mis compras</h2>
@@ -15,13 +15,13 @@
 			</tr>
 		</thead>
 		<tbody>
-		{% for song in canciones %}
+		{% for song in songs %}
 			<tr>
 				<td>{{ song.title }}</td>
 				<td>{{ song.kind }}</td>
 				<td>
 					 <audio controls>
-					   <source src="/audios/{{ song._id.toString() }}.mp3" type="audio/mpeg">
+					   <source src="/audios/{{ song._id }}.mp3" type="audio/mpeg">
 					</audio>  
 			    </td>
 			</tr>
