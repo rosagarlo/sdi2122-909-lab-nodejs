@@ -57,12 +57,12 @@ songsRepository.init(app, MongoClient);
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 
-
 let indexRouter = require('./routes/index');
 require("./routes/users.js")(app, usersRepository);
 require("./routes/comments.js")(app, commentsRepository);
 require("./routes/songs.js")(app, songsRepository, commentsRepository);
 require("./routes/authors.js")(app);
+require("./routes/api/songsAPIv1.0.js")(app, songsRepository);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
