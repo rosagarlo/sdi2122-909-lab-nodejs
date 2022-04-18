@@ -3,6 +3,29 @@ module.exports = function (app, songsRepository, usersRepository) {
 
     app.get("/api/v1.0/songs", function (req, res) {
         try {
+            let email = res.user.email;
+            let filter = {author: email};
+            let options = {};
+            songsRepository.getSongs(filter, options).then(songs => {
+                if (songs === null) {
+                    res.status(404);
+                    res.json({error: "Email inválido o no existe"})
+                } else {
+                    res.status(200);
+                    res.json({songs: songs})
+                }
+            }).catch(error => {
+                res.status(500);
+                res.json({error: "Se ha producido un error a recuperar la canción."})
+            });
+        } catch (e) {
+            res.status(500);
+            res.json({error: "Se ha producido un error :" + e})
+        }
+    });
+
+    app.get("/api/v1.0/songs/:id", function (req, res) {
+        try {
             let songId = ObjectId(req.params.id)
             let filter = {_id: songId};
             let options = {};
@@ -52,7 +75,7 @@ module.exports = function (app, songsRepository, usersRepository) {
                 title: req.body.title,
                 kind: req.body.kind,
                 price: req.body.price,
-                author: req.session.user
+                author: res.user.email
             }
             // Validar aquí: título, género, precio y autor.
             songsRepository.insertSong(song, function (songId) {
@@ -119,12 +142,9 @@ module.exports = function (app, songsRepository, usersRepository) {
     app.put('/api/v1.0/songs/:id', function (req, res) {
         try {
             let songId = ObjectId(req.params.id);
-            let filter = {_id: songId};
+            let filter = {_id: songId, author: res.user.email};
             //Si la _id NO no existe, no crea un nuevo documento.
             const options = {upsert: false};
-            let song = {
-                author: req.session.user
-            }
             if (typeof req.body.title != "undefined" && req.body.title != null)
                 song.title = req.body.title;
             if (typeof req.body.kind != "undefined" && req.body.kind != null)
