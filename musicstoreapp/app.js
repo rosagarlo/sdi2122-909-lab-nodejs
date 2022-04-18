@@ -5,6 +5,8 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
 let app = express();
+let jwt = require('jsonwebtoken');
+app.set('jwt', jwt);
 let expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
@@ -41,6 +43,9 @@ const userAuthorRouter = require('./routes/userAuthorRouter');
 app.use("/songs/edit", userAuthorRouter);
 app.use("/songs/delete", userAuthorRouter);
 
+const userTokenRouter = require('./routes/userTokenRouter');
+app.use("/api/v1.0/songs/", userTokenRouter);
+
 const userAudiosRouter = require('./routes/userAudiosRouter');
 
 app.use("/songs/add", userSessionRouter);
@@ -62,7 +67,7 @@ require("./routes/users.js")(app, usersRepository);
 require("./routes/comments.js")(app, commentsRepository);
 require("./routes/songs.js")(app, songsRepository, commentsRepository);
 require("./routes/authors.js")(app);
-require("./routes/api/songsAPIv1.0.js")(app, songsRepository);
+require("./routes/api/songsAPIv1.0.js")(app, songsRepository, usersRepository);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
