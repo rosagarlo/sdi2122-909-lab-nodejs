@@ -173,10 +173,23 @@ module.exports = function (app, songsRepository, commentsRepository) {
         let options = {};
         songsRepository.findSong(filter, options).then(song => {
             commentsRepository.getComments(filterComment, options).then(comments => {
-                res.render("songs/song.twig", {song: song, comments: comments, user: user});
-            })
-        }).catch(error => {
-            res.send("Se ha producido un error al buscar la canción " + error)
+                let settings = {
+                    url: "https://www.freeforexapi.com/api/live?pairs=EURUSD",
+                    method: "get",
+                    headers: {"token": "ejemplo",}
+                }
+                let rest = app.get("rest");
+                rest(settings, function (error, response, body) {
+                    console.log("cod: " + response.statusCode + " Cuerpo :" + body);
+                    let responseObject = JSON.parse(body);
+                    let rateUSD = responseObject.rates.EURUSD.rate; // nuevo campo "usd" redondeado a dos decimales
+                    let songValue = rateUSD * song.price;
+                    song.usd = Math.round(songValue * 100) / 100;
+                    res.render("songs/song.twig", {song: song, comments: comments, user: user});
+                })
+            }).catch(error => {
+                res.send("Se ha producido un error al buscar la canción " + error)
+            });
         });
     });
 
