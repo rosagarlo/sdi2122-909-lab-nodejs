@@ -51,31 +51,8 @@ module.exports = function (app, songsRepository, commentsRepository) {
         res.render("shop.twig", response);
     });
 
-    app.get('/songs/:id', function (req, res) {
-        let filter = {_id: ObjectId(req.params.id)};
-        let filterComment = {song_id: req.params.id}
-        let options = {};
-        songsRepository.findSong(filter, options).then(song => {
-            commentsRepository.getComments(filterComment, options).then(comments => {
-                res.render("songs/song.twig", {song: song, comments: comments});
-            })
-        }).catch(error => {
-            res.send("Se ha producido un error al buscar la canción " + error)
-        });
-    });
-
-    app.get('/publications', function (req, res) {
-        let filter = {author: req.session.user};
-        let options = {sort: {title: 1}};
-        songsRepository.getSongs(filter, options).then(songs => {
-            res.render("publications.twig", {songs: songs});
-        }).catch(error => {
-            res.send("Se ha producido un error al listar las publicaciones del usuario:" + error)
-        });
-    })
-
     app.get('/songs/add', function (req, res) {
-        res.render("/songs/add.twig");
+        res.render("songs/add.twig");
     });
 
     app.post('/songs/add', function (req, res) {
@@ -113,6 +90,16 @@ module.exports = function (app, songsRepository, commentsRepository) {
             }
         });
     });
+
+    app.get('/publications', function (req, res) {
+        let filter = {author: req.session.user};
+        let options = {sort: {title: 1}};
+        songsRepository.getSongs(filter, options).then(songs => {
+            res.render("publications.twig", {songs: songs});
+        }).catch(error => {
+            res.send("Se ha producido un error al listar las publicaciones del usuario:" + error)
+        });
+    })
 
     app.get('/songs/delete/:id', function (req, res) {
         let filter = {_id: ObjectId(req.params.id)};
@@ -177,6 +164,20 @@ module.exports = function (app, songsRepository, commentsRepository) {
         let response = 'id: ' + req.params.id + '<br>'
             + 'Tipo de música: ' + req.params.kind;
         res.send(response);
+    });
+
+    app.get('/songs/:id', function (req, res) {
+        let filter = {_id: ObjectId(req.params.id)};
+        let filterComment = {song_id: req.params.id}
+        let user = {user: req.session.user}
+        let options = {};
+        songsRepository.findSong(filter, options).then(song => {
+            commentsRepository.getComments(filterComment, options).then(comments => {
+                res.render("songs/song.twig", {song: song, comments: comments, user: user});
+            })
+        }).catch(error => {
+            res.send("Se ha producido un error al buscar la canción " + error)
+        });
     });
 
     app.get('/purchases', function (req, res) {
